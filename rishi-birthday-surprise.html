@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6c246f">
+  <title>A little surprise for you</title>
+  <style>
+    :root { --pink:#ffb9d8; --rose:#ec5a9a; --purple:#54205f; --deep:#2c123e; --gold:#ffd879; --cream:#fff8f1; }
+    * { box-sizing:border-box; }
+    html, body { width:100%; min-height:100%; margin:0; overflow:hidden; font-family:Georgia, 'Times New Roman', serif; background:var(--deep); color:var(--cream); }
+    button, input { font:inherit; }
+    .stage { position:relative; display:grid; place-items:center; min-height:100dvh; isolation:isolate; overflow:hidden; background:radial-gradient(circle at 15% 15%, #a54591 0, transparent 27%), radial-gradient(circle at 85% 75%, #59349e 0, transparent 33%), linear-gradient(135deg,#260e39,#61205c 55%,#31134c); }
+    .stage::before, .stage::after { content:''; position:absolute; border-radius:50%; filter:blur(2px); opacity:.45; pointer-events:none; }
+    .stage::before { width:52vmax; height:52vmax; border:1px solid #ffdbeb; animation:drift 18s ease-in-out infinite alternate; }
+    .stage::after { width:32vmax; height:32vmax; border:1px solid #ffd879; animation:drift 12s -4s ease-in-out infinite alternate-reverse; }
+    @keyframes drift { to { transform:translate(7vmax,-5vmax) rotate(35deg) scale(1.12); } }
+    .screen { position:absolute; inset:0; display:grid; place-items:center; padding:clamp(20px,5vw,56px); opacity:0; visibility:hidden; transform:scale(.98); transition:opacity .55s ease, transform .55s ease, visibility .55s; }
+    .screen.active { opacity:1; visibility:visible; transform:scale(1); z-index:2; }
+    .card { position:relative; width:min(660px,100%); text-align:center; padding:clamp(30px,6vw,68px) clamp(20px,7vw,72px); border:1px solid rgba(255,235,247,.35); border-radius:32px; background:linear-gradient(140deg,rgba(255,255,255,.16),rgba(255,255,255,.05)); box-shadow:0 28px 80px rgba(11,0,29,.42), inset 0 1px 0 rgba(255,255,255,.28); backdrop-filter:blur(16px); }
+    .eyebrow { margin:0 0 14px; color:var(--gold); font:600 clamp(.7rem,2vw,.9rem)/1.2 Arial,sans-serif; letter-spacing:.22em; text-transform:uppercase; }
+    h1,h2,p { margin-top:0; }
+    h1 { margin-bottom:15px; font-size:clamp(2.35rem,9vw,5.7rem); line-height:.93; letter-spacing:.03em; text-shadow:0 4px 18px #411842; }
+    h2 { margin-bottom:16px; font-size:clamp(2rem,6vw,3.8rem); line-height:1.02; }
+    .lead { max-width:460px; margin:0 auto; color:#ffe8f3; font-size:clamp(1rem,2.8vw,1.2rem); line-height:1.65; }
+    .spark { display:inline-block; color:var(--gold); animation:twinkle 1.6s infinite alternate; }
+    @keyframes twinkle { to { transform:scale(1.35) rotate(18deg); filter:drop-shadow(0 0 10px #ffdc71); } }
+    .question-actions { position:relative; height:132px; width:min(360px,100%); margin:36px auto 0; }
+    .button { min-width:130px; border:0; border-radius:999px; padding:14px 26px; color:#4a164a; background:linear-gradient(135deg,#fff7c7,#ffd572); box-shadow:0 9px 24px rgba(19,0,33,.3), inset 0 1px 1px white; cursor:pointer; font-weight:bold; font-size:1.05rem; transition:transform .2s ease, filter .2s ease; }
+    .button:hover,.button:focus-visible { transform:translateY(-3px) scale(1.035); filter:brightness(1.08); outline:2px solid white; outline-offset:4px; }
+    #yesBtn { position:absolute; left:8px; top:12px; background:linear-gradient(135deg,#fff4b8,#f7bb62); }
+    #noBtn { position:absolute; right:8px; top:12px; color:white; background:linear-gradient(135deg,#d95199,#8d3c93); touch-action:none; }
+    .tiny { margin-top:12px; color:#ffddeb; font:italic .95rem/1.5 Arial,sans-serif; }
+    .lock-wrap { width:140px; height:158px; margin:4px auto 28px; position:relative; filter:drop-shadow(0 13px 17px rgba(30,2,44,.4)); }
+    .shackle { position:absolute; z-index:0; top:0; left:31px; width:78px; height:88px; border:14px solid var(--gold); border-bottom:0; border-radius:44px 44px 0 0; box-shadow:inset 5px 3px 8px #fff0ae, 0 0 18px rgba(255,215,113,.55); transform-origin:25% 100%; transition:transform .65s cubic-bezier(.2,.8,.2,1); }
+    .lock-body { position:absolute; bottom:0; z-index:1; width:140px; height:99px; border-radius:20px; background:linear-gradient(145deg,#ffe99e,#eaa648 50%,#fff0a2); box-shadow:inset 7px 7px 10px rgba(255,255,255,.7), inset -9px -9px 16px rgba(129,64,16,.25); }
+    .keyhole { position:absolute; left:59px; top:33px; width:22px; height:39px; border-radius:50% 50% 5px 5px; background:#613062; clip-path:polygon(28% 0,72% 0,100% 30%,67% 58%,78% 100%,22% 100%,33% 58%,0 30%); }
+    .lock-wrap.unlocked .shackle { transform:rotate(-28deg) translate(-10px,-3px); }
+    .password { display:flex; justify-content:center; gap:9px; margin:30px auto 18px; }
+    .password input { width:min(62px,17vw); aspect-ratio:1; border:1px solid rgba(255,255,255,.55); border-radius:16px; color:white; background:rgba(38,10,59,.45); text-align:center; font-size:clamp(1.7rem,6vw,2.3rem); outline:none; caret-color:var(--gold); }
+    .password input:focus { border-color:var(--gold); box-shadow:0 0 0 4px rgba(255,216,121,.22); }
+    .hint { min-height:22px; margin:12px 0 0; color:#ffe1ef; font:italic .9rem Arial,sans-serif; }
+    .error { color:#ffd36f; animation:shake .38s linear; }
+    @keyframes shake { 25%{transform:translateX(-9px)} 75%{transform:translateX(9px)} }
+    #celebrate { z-index:3; overflow-y:auto; align-content:center; }
+    #fireworks,#petals { position:fixed; inset:0; z-index:-1; width:100%; height:100%; pointer-events:none; }
+    .celebration-card { max-width:760px; padding:clamp(25px,5vw,52px); background:linear-gradient(145deg,rgba(82,23,90,.61),rgba(230,87,150,.16)); }
+    .birthday { background:linear-gradient(90deg,#fff0a8,#fffdf2 35%,#ffd979 70%,#fff5bd); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none; filter:drop-shadow(0 5px 12px rgba(41,5,61,.7)); animation:glow 2s ease-in-out infinite alternate; }
+    @keyframes glow { to { filter:drop-shadow(0 0 18px #ffd36e); transform:scale(1.018); } }
+    .name { display:block; color:#ffb7dc; font-size:1.08em; }
+    .message { max-width:570px; margin:25px auto 0; color:#fff3f9; font-size:clamp(1rem,2.7vw,1.2rem); line-height:1.72; }
+    .signoff { margin:25px 0 0; color:var(--gold); font-size:1.25rem; font-style:italic; }
+    .flower { position:fixed; z-index:0; font-size:clamp(3rem,8vw,6.3rem); pointer-events:none; filter:drop-shadow(0 8px 7px rgba(37,1,54,.32)); animation:float 5s ease-in-out infinite alternate; }
+    .flower.left { left:clamp(-10px,2vw,32px); bottom:clamp(16px,7vh,72px); } .flower.right { right:clamp(-10px,2vw,32px); bottom:clamp(16px,7vh,72px); animation-delay:-2s; }
+    .flower.top { left:7%; top:7%; font-size:clamp(2.4rem,6vw,4.4rem); animation-delay:-3s; } .flower.top-right { right:8%; top:9%; font-size:clamp(2.2rem,5vw,3.8rem); animation-delay:-1s; }
+    @keyframes float { to { transform:translateY(-14px) rotate(8deg); } }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+    @media (max-width:420px) { .question-actions { height:148px; margin-top:30px; } .button { min-width:122px; padding:13px 20px; } .tiny { margin-top:8px; } }
+    @media (max-height:650px) and (min-width:600px) { .card { padding:24px 50px; } .lock-wrap { transform:scale(.78); margin:-15px auto 4px; } .password { margin:10px auto; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="screen active" id="welcome" aria-labelledby="questionTitle">
+      <div class="card">
+        <p class="eyebrow"><span class="spark">✦</span> A tiny question <span class="spark">✦</span></p>
+        <h1 id="questionTitle">Will you open<br>my surprise?</h1>
+        <p class="lead">I made something sweet especially for you.</p>
+        <div class="question-actions" id="buttonArea">
+          <button class="button" id="yesBtn" type="button">Yes, please ♡</button>
+          <button class="button" id="noBtn" type="button" aria-label="No">No</button>
+        </div>
+        <p class="tiny">Choose wisely... the “No” seems a little shy.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="lockScreen" aria-labelledby="surpriseTitle">
+      <div class="card">
+        <p class="eyebrow">Only for you</p>
+        <div class="lock-wrap" id="lock" aria-hidden="true"><div class="shackle"></div><div class="lock-body"><div class="keyhole"></div></div></div>
+        <h2 id="surpriseTitle">I Have a Little<br>Surprise for You</h2>
+        <p class="lead">A small secret waits behind this golden lock.</p>
+        <label class="sr-only" for="digit1">Enter the four digit password</label>
+        <div class="password" aria-label="Four digit password">
+          <input id="digit1" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="First digit">
+          <input inputmode="numeric" maxlength="1" aria-label="Second digit">
+          <input inputmode="numeric" maxlength="1" aria-label="Third digit">
+          <input inputmode="numeric" maxlength="1" aria-label="Fourth digit">
+        </div>
+        <p class="hint" id="hint">Enter the date that opens this little secret(your birth date mm/dd).</p>
+      </div>
+    </section>
+
+    <section class="screen" id="celebrate" aria-labelledby="birthdayTitle">
+      <canvas id="fireworks"></canvas><canvas id="petals"></canvas>
+      <span class="flower left">🌷</span><span class="flower right">🌸</span><span class="flower top">🌺</span><span class="flower top-right">🌼</span>
+      <div class="card celebration-card">
+        <p class="eyebrow"><span class="spark">✦</span> Today is all about you <span class="spark">✦</span></p>
+        <h1 class="birthday" id="birthdayTitle">HAPPY BIRTHDAY <span class="name">RISHI</span></h1>
+        <p class="message">Wishing you a day filled with beautiful little moments, warm smiles, and all the happiness your heart can hold. May this new year bring you closer to every dream you carry and surround you with people who make life feel extra special. Keep shining exactly as you are. You deserve every wonderful thing coming your way.</p>
+        <p class="signoff">With lots of love and the sweetest wishes ♡</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    const screens={welcome:document.querySelector('#welcome'),lock:document.querySelector('#lockScreen'),celebrate:document.querySelector('#celebrate')};
+    const show=name=>{Object.values(screens).forEach(screen=>screen.classList.remove('active'));screens[name].classList.add('active');};
+    const yes=document.querySelector('#yesBtn'), no=document.querySelector('#noBtn'), area=document.querySelector('#buttonArea');
+    function dodgeNo(){const box=area.getBoundingClientRect(), btn=no.getBoundingClientRect(), yesBox=yes.getBoundingClientRect();const maxX=Math.max(0,box.width-btn.width),maxY=Math.max(0,box.height-btn.height);const safe={left:yesBox.left-box.left-14,right:yesBox.right-box.left+14,top:yesBox.top-box.top-14,bottom:yesBox.bottom-box.top+14};let x=maxX,y=maxY;for(let attempt=0;attempt<30;attempt++){const candidateX=Math.random()*maxX,candidateY=Math.random()*maxY;const overlaps=candidateX<safe.right&&candidateX+btn.width>safe.left&&candidateY<safe.bottom&&candidateY+btn.height>safe.top;if(!overlaps){x=candidateX;y=candidateY;break;}}no.style.left=x+'px';no.style.top=y+'px';no.style.right='auto';}
+    no.addEventListener('pointerenter',dodgeNo);no.addEventListener('pointerdown',event=>{event.preventDefault();dodgeNo();});no.addEventListener('focus',dodgeNo);yes.addEventListener('click',()=>{show('lock');setTimeout(()=>document.querySelector('#digit1').focus(),450);});
+    const digits=[...document.querySelectorAll('.password input')], hint=document.querySelector('#hint'), lock=document.querySelector('#lock');
+    function readCode(){return digits.map(input=>input.value).join('');}
+    function unlock(){lock.classList.add('unlocked');hint.textContent='Unlocked — your surprise is here!';setTimeout(()=>{show('celebrate');startCelebration();},750);}
+    digits.forEach((input,index)=>{input.addEventListener('input',event=>{input.value=input.value.replace(/\D/g,'').slice(-1);if(input.value&&index<3)digits[index+1].focus();if(readCode().length===4){if(readCode()==='0919')unlock();else{hint.textContent='That little lock needs the right four numbers.';hint.classList.remove('error');void hint.offsetWidth;hint.classList.add('error');setTimeout(()=>{digits.forEach(d=>d.value='');digits[0].focus();},650);}}});input.addEventListener('keydown',event=>{if(event.key==='Backspace'&&!input.value&&index)digits[index-1].focus();});input.addEventListener('paste',event=>{event.preventDefault();const values=(event.clipboardData.getData('text').match(/\d/g)||[]).slice(0,4);values.forEach((value,i)=>digits[i].value=value);digits[Math.min(values.length,3)].focus();if(readCode()==='0919')unlock();});});
+    let started=false;
+    function startCelebration(){if(started)return;started=true;const fire=document.querySelector('#fireworks'), petals=document.querySelector('#petals'), fc=fire.getContext('2d'), pc=petals.getContext('2d');let width,height,particles=[],drops=[];
+      function resize(){width=innerWidth;height=innerHeight;[fire,petals].forEach(canvas=>{canvas.width=width*devicePixelRatio;canvas.height=height*devicePixelRatio;canvas.style.width=width+'px';canvas.style.height=height+'px';});fc.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);pc.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
+      resize();addEventListener('resize',resize);
+      const colors=['#ffd86e','#ff9cce','#e8b6ff','#fff6c8','#aeeeff'];
+      function burst(){const x=width*(.16+Math.random()*.68),y=height*(.08+Math.random()*.38);for(let index=0;index<58;index++){const angle=Math.random()*Math.PI*2,speed=1+Math.random()*4;particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,color:colors[index%colors.length],life:56+Math.random()*30});}}
+      for(let index=0;index<55;index++)drops.push({x:Math.random()*width,y:Math.random()*height-height,size:5+Math.random()*10,speed:.7+Math.random()*1.7,angle:Math.random()*6,color:colors[1+index%3]});
+      let last=0;function animate(time){fc.clearRect(0,0,width,height);pc.clearRect(0,0,width,height);particles=particles.filter(particle=>particle.life-->0);particles.forEach(particle=>{particle.x+=particle.vx;particle.y+=particle.vy;particle.vy+=.045;fc.globalAlpha=Math.max(0,particle.life/70);fc.fillStyle=particle.color;fc.beginPath();fc.arc(particle.x,particle.y,2.2,0,Math.PI*2);fc.fill();});fc.globalAlpha=1;drops.forEach(drop=>{drop.y+=drop.speed;drop.x+=Math.sin(drop.y/32+drop.angle)*.65;if(drop.y>height+15){drop.y=-18;drop.x=Math.random()*width;}pc.save();pc.translate(drop.x,drop.y);pc.rotate(drop.angle+drop.y/80);pc.fillStyle=drop.color;pc.beginPath();pc.ellipse(0,0,drop.size*.48,drop.size,0,0,Math.PI*2);pc.fill();pc.restore();});if(time-last>850){burst();last=time;}requestAnimationFrame(animate);}burst();burst();animate(0);}
+  </script>
+</body>
+</html>
